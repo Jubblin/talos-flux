@@ -6,6 +6,7 @@ data "talos_machine_configuration" "this" {
   machine_type     = "controlplane"
   cluster_endpoint = "https://${local.endpoint}:6443"
   machine_secrets  = talos_machine_secrets.this.machine_secrets
+  config_patches   = local.config_patches
 }
 
 data "talos_client_configuration" "this" {
@@ -27,15 +28,17 @@ data "talos_cluster_health" "this" {
   client_configuration = talos_machine_secrets.this.client_configuration
   endpoints            = local.nodes
   control_plane_nodes  = local.nodes
+  timeouts = {
+    read = "60m"
+  }
+  depends_on           = [resource.local_sensitive_file.kubeconfig, resource.local_sensitive_file.talosconfig]
 }
-
 
 resource "talos_machine_configuration_apply" "this" {
   count                       = length(local.nodes)
   client_configuration        = talos_machine_secrets.this.client_configuration
   machine_configuration_input = data.talos_machine_configuration.this.machine_configuration
   node                        = local.nodes[count.index]
-  config_patches              = local.cp_config_patches
 }
 
 resource "talos_machine_bootstrap" "this" {
@@ -48,12 +51,12 @@ resource "talos_machine_bootstrap" "this" {
 
 resource "local_sensitive_file" "kubeconfig" {
   content  = local.kubeconfig
-  filename = "${local.endpoint}_kubeconfig.yaml"
+  filename = "configs/${local.endpoint}_kubeconfig.yaml"
 }
 
 resource "local_sensitive_file" "talosconfig" {
   content  = local.talosconfig
-  filename = "${local.endpoint}_talosconfig.yaml"
+  filename = "configs/${local.endpoint}_talosconfig.yaml"
 }
 
 resource "tls_private_key" "this" {
@@ -69,7 +72,7 @@ resource "github_repository_deploy_key" "this" {
 }
 
 resource "flux_bootstrap_git" "this" {
-  depends_on = [github_repository_deploy_key.this]
+  depends_on = [github_repository_deploy_key.this, flux_bootstrap_git.this]
 
   path = "clusters/${var.cluster_name}"
 }

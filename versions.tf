@@ -12,12 +12,7 @@ terraform {
       version = ">=5.18.0"
     }
   }
-}
-
-provider "talos" {
-  # Configuration options
-}
-
+} 
 
 provider "flux" {
   kubernetes = {
