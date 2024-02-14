@@ -65,14 +65,13 @@ resource "tls_private_key" "this" {
 }
 
 resource "github_repository_deploy_key" "this" {
-  title      = "Flux"
+  title      = "${var.cluster_name}_FluxCD"
   repository = var.github_repository
   key        = tls_private_key.this.public_key_openssh
   read_only  = "false"
 }
 
 resource "flux_bootstrap_git" "this" {
-  depends_on = [github_repository_deploy_key.this, flux_bootstrap_git.this]
-
+  depends_on = [github_repository_deploy_key.this, data.talos_cluster_health.this]
   path = "clusters/${var.cluster_name}"
 }
