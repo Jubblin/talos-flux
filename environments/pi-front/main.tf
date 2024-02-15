@@ -1,8 +1,8 @@
 locals {
   cp_config_patches = [
-    file("../../patches/cilium.yaml"), 
+    file("../../patches/cilium.yaml"),
     file("../../patches/pi_storage.yaml")
-    ]
+  ]
 }
 
 variable "nodes" {

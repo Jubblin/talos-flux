@@ -30,7 +30,7 @@ data "talos_cluster_health" "this" {
   timeouts = {
     read = "60m"
   }
-  depends_on           = [resource.local_sensitive_file.kubeconfig, resource.local_sensitive_file.talosconfig]
+  depends_on = [resource.local_sensitive_file.kubeconfig, resource.local_sensitive_file.talosconfig]
 }
 
 resource "talos_machine_configuration_apply" "this" {
@@ -72,5 +72,5 @@ resource "github_repository_deploy_key" "this" {
 
 resource "flux_bootstrap_git" "this" {
   depends_on = [github_repository_deploy_key.this, data.talos_cluster_health.this]
-  path = "clusters/${var.cluster_name}"
+  path       = "clusters/${var.cluster_name}"
 }
