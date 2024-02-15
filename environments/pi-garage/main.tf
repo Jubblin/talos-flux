@@ -1,7 +1,7 @@
 locals {
   cp_config_patches = [
-    file("${path.root}/patches/cilium.yaml"), 
-    file("${path.root}/patches/pi_storage.yaml")
+    file("../../patches/cilium.yaml"), 
+    file("../../patches/pi_storage.yaml")
     ]
 }
 
@@ -31,7 +31,7 @@ variable "github_repository" {
 }
 
 module "bootstrap" {
-  source            = "../../"
+  source            = "../../modules/talos-deploy/"
   cluster_name      = var.cluster_name
   domain_name       = var.domain_name
   github_repository = var.github_repository

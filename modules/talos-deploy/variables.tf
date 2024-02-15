@@ -36,11 +36,3 @@ locals {
   config_patches                  = var.config_patches
   talosconfig                     = data.talos_client_configuration.this.talos_config
 }
-
-output "kubeconfig" {
-  value = data.talos_cluster_kubeconfig.this
-}
-
-output "talosconfig" {
-  value = data.talos_client_configuration.this.talos_config
-}

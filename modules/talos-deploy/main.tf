@@ -1,4 +1,3 @@
-
 resource "talos_machine_secrets" "this" {}
 
 data "talos_machine_configuration" "this" {
